@@ -1,8 +1,12 @@
 import discord
 from discord.ext import commands
+from config import TOKEN, CHANNEL_ID
 
-TOKEN = ''
-CHANNEL_ID = ''
+# print("Token =", TOKEN)
+# print("Channel ID =", CHANNEL_ID)
+
+# ใช้ TOKEN, CHANNEL_ID ต่อในโค้ดบอทได้เลย
+
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
