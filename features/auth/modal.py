@@ -27,7 +27,8 @@ class VerifyCodeModal(Modal):
             )
             return
 
-        save_user_code(interaction.user.id, code, expire_seconds=300)
+        save_user_code(interaction.user.id, code)
+        print(f"รหัสยืนยันของ {interaction.user.id} คือ {code}")
 
         try:
             await interaction.user.send(f"""

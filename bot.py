@@ -2,12 +2,22 @@
 
 import discord
 import asyncio
+import atexit
+import signal
 from discord.ext import commands
 from features.auth.modal import VerifyCodeModal
 from config import TOKEN, CHANNEL_ID
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+sent_message = None  # เก็บข้อความที่ส่งไว้ เพื่อลบตอนปิด
+
+async def delete_sent_message():
+    channel = bot.get_channel(CHANNEL_ID)
+    if channel:
+        deleted = await channel.purge(limit=50, check=lambda m: m.author == bot.user)
+        print(f"🧹 ลบข้อความเก่าทั้งหมด {len(deleted)} ข้อความ")
 
 @bot.event
 async def on_ready():
@@ -19,6 +29,8 @@ async def on_ready():
         if not channel:
             print("❌ ไม่พบแชนแนลตาม ID ที่กำหนด")
             return
+
+        await delete_sent_message()
 
         embed = discord.Embed(
             title="SoullandRealms Verify",
@@ -60,23 +72,10 @@ async def on_ready():
 async def on_interaction(interaction: discord.Interaction):
     if interaction.type == discord.InteractionType.component and interaction.data.get("custom_id") == "open_verify_modal":
         await interaction.response.send_modal(VerifyCodeModal())
-        
-async def delete_sent_message():
-    global sent_message
-    if sent_message is not None:
-        try:
-            await sent_message.delete()
-            print("✅ ลบข้อความสำเร็จ")
-        except Exception as e:
-            print(f"❌ ลบข้อความล้มเหลว: {e}")
-
+     
 @bot.event
 async def on_disconnect():
-    # จะเกิดตอนบอทตัดการเชื่อมต่อ (อาจไม่เสมอไป)
+    print("🔌 บอทตัดการเชื่อมต่อ...พยายามลบข้อความ")
     await delete_sent_message()
-
-def on_exit():
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(delete_sent_message())
 
 bot.run(TOKEN)
