@@ -16,7 +16,7 @@ sent_message = None  # เก็บข้อความที่ส่งไว
 async def delete_sent_message():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
-        deleted = await channel.purge(limit=50, check=lambda m: m.author == bot.user)
+        deleted = await channel.purge(limit=50, check=lambda m: m.author == bot.user) # type: ignore
         print(f"🧹 ลบข้อความเก่าทั้งหมด {len(deleted)} ข้อความ")
 
 @bot.event
@@ -63,14 +63,14 @@ async def on_ready():
             custom_id="open_verify_modal"
         ))
 
-        await channel.send(embed=embed, view=view)
+        await channel.send(embed=embed, view=view) # type: ignore
     except Exception as e:
         print(f"❌ Error during on_ready: {e}")
         await bot.close()
 
 @bot.event
 async def on_interaction(interaction: discord.Interaction):
-    if interaction.type == discord.InteractionType.component and interaction.data.get("custom_id") == "open_verify_modal":
+    if interaction.type == discord.InteractionType.component and interaction.data.get("custom_id") == "open_verify_modal": # type: ignore
         await interaction.response.send_modal(VerifyCodeModal())
      
 @bot.event
@@ -78,4 +78,4 @@ async def on_disconnect():
     print("🔌 บอทตัดการเชื่อมต่อ...พยายามลบข้อความ")
     await delete_sent_message()
 
-bot.run(TOKEN)
+bot.run(TOKEN) # type: ignore

@@ -2,22 +2,22 @@
 cd /d %~dp0
 
 echo ===============================
-echo 🔧 ติดตั้ง dependencies...
+echo install dependencies...
 echo ===============================
 python -m pip install --upgrade pip >nul 2>&1
 python -m pip install -r requirements.txt
 
 if errorlevel 1 (
-    echo ❌ เกิดข้อผิดพลาดในการติดตั้ง packages!
+    echo ❌ error can't install packages!
     pause
     exit /b
 )
 
 echo ===============================
-echo 🚀 กำลังเริ่มรันบอท...
+echo starting bot...
 echo ===============================
 python bot.py
 
 echo ===============================
-echo ✅ สิ้นสุดการทำงานของบอท
+echo bot stopped
 pause
