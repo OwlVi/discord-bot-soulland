@@ -9,7 +9,7 @@ async def setup(bot):
                     ext = f"features.{folder}.{filename[:-3]}"
                     try:
                         await bot.load_extension(ext)
-                        print(f"โหลด {ext} สำเร็จ")
+                        print(f"Loaded {ext} successfully")
                     except Exception as e:
-                        print(f"โหลด {ext} ไม่สำเร็จ: {e}")
-    print("โหลด extensions เสร็จสิ้น")
+                        print(f"Failed to load {ext}: {e}")
+    print("Download extensions successfully")

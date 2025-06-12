@@ -1,81 +1,66 @@
-# bot.py
-
 import discord
-import asyncio
-import atexit
-import signal
 from discord.ext import commands
-from features.auth.modal import VerifyCodeModal
-from config import TOKEN, CHANNEL_ID
+from features.listener import SoullandEmbed, SoullandView
+from config import TOKEN, VERIFY_CHANNEL_ID, GIVE_ROLE_CHANNEL_ID
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 sent_message = None  # เก็บข้อความที่ส่งไว้ เพื่อลบตอนปิด
-
-async def delete_sent_message():
-    channel = bot.get_channel(CHANNEL_ID)
-    if channel:
-        deleted = await channel.purge(limit=50, check=lambda m: m.author == bot.user) # type: ignore
-        print(f"🧹 ลบข้อความเก่าทั้งหมด {len(deleted)} ข้อความ")
+channel_list = []  # เก็บช่องทางที่ส่งข้อความไว้
 
 @bot.event
 async def on_ready():
     try:
         await bot.tree.sync()
         print(f"✅ Logged in as {bot.user}")
-
-        channel = bot.get_channel(CHANNEL_ID)
-        if not channel:
-            print("❌ ไม่พบแชนแนลตาม ID ที่กำหนด")
+        
+        # initialize channels and views
+        
+        verify_channel = bot.get_channel(VERIFY_CHANNEL_ID.__int__())
+        if not verify_channel:
+            print("❌ Channel not found")
             return
 
-        await delete_sent_message()
+        if isinstance(verify_channel, discord.TextChannel):
+            await delete_sent_message(verify_channel)
+            await verify_channel.send(embed=SoullandEmbed().verify(), view=SoullandView().add("verify"))
+            print("✅ Verify embed created successfully")
+        else:
+            print("❌ Verify channel is not a TextChannel")
 
-        embed = discord.Embed(
-            title="SoullandRealms Verify",
-            description=(
-                "**ขั้นตอนการยืนยันตัวตน**\n\n"
-                "1. โปรดเข้าร่วมเซิฟเวอร์ที่ `play.soullandrealms.com`\n"
-                "2. คุยกับ Wumpus เพื่อขอรหัส 4 หลักมา\n"
-                "3. กลับมาที่ดิสคอร์ดแล้วกดปุ่ม **กรอกรหัสยืนยัน**\n"
-                "4. คุยกับ Wumpus แล้วเลือกคำตอบว่า **คุณได้ส่งรหัสแล้ว**\n\n"
-                "หากพบปัญหา สามารถติดต่อทีมงานได้ทุกเมื่อ"
-            ),
-            color=discord.Color.green()
-        )
+        give_role_channel = bot.get_channel(GIVE_ROLE_CHANNEL_ID.__int__())
+        if not give_role_channel:
+            print("❌ Give role channel not found")
+            return
+        if isinstance(give_role_channel, discord.TextChannel):
+            await delete_sent_message(give_role_channel)
+            await give_role_channel.send(embed=SoullandEmbed().give_role(), view=SoullandView().add("give_role", "link"))
+            print("✅ Give role embed created successfully")
+        else:
+            print("❌ Give role channel is not a TextChannel")
+    
+        channel_list.append(verify_channel)
+        channel_list.append(give_role_channel)
+            
+        print("✅ Bot is ready and embeds are sent successfully")
 
-        embed.add_field(
-            name="📺 วิธีการยืนยันตัวตน (คลิกดูวิดีโอ)",
-            value="[YouTube - คลิกที่นี่](https://www.youtube.com/watch?v=IUl0jDDN6Ug&t=1s)",
-            inline=False
-        )
-
-        embed.set_image(
-            url="https://media.discordapp.net/attachments/938151480270127174/1381839706651754517/aw_.png?format=webp&quality=lossless&width=1522&height=856"
-        )
-        embed.set_footer(text="SoullandRealms - ระบบยืนยันตัวตนอัตโนมัติ")
-
-        view = discord.ui.View()
-        view.add_item(discord.ui.Button(
-            label="กรอกรหัสยืนยัน",
-            style=discord.ButtonStyle.success,
-            custom_id="open_verify_modal"
-        ))
-
-        await channel.send(embed=embed, view=view) # type: ignore
     except Exception as e:
         print(f"❌ Error during on_ready: {e}")
         await bot.close()
 
-@bot.event
-async def on_interaction(interaction: discord.Interaction):
-    if interaction.type == discord.InteractionType.component and interaction.data.get("custom_id") == "open_verify_modal": # type: ignore
-        await interaction.response.send_modal(VerifyCodeModal())
+async def delete_sent_message(channel: discord.TextChannel ):
+    fetched_channel = bot.get_channel(channel.id) if channel else None
+    if isinstance(fetched_channel, discord.TextChannel):
+        deleted = await fetched_channel.purge(limit=50, check=lambda m: m.author == bot.user)
+        print(f"🧹 Deleted {len(deleted)} messages")
      
 @bot.event
 async def on_disconnect():
-    print("🔌 บอทตัดการเชื่อมต่อ...พยายามลบข้อความ")
-    await delete_sent_message()
+    print("🔌 Disconnected from Discord")
+    for channel in channel_list:
+        if isinstance(channel, discord.TextChannel):
+            await delete_sent_message(channel)
+            print(f"🧹 Deleted messages in {channel.name}")
 
-bot.run(TOKEN) # type: ignore
+bot.run(TOKEN.__str__())
