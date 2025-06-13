@@ -127,7 +127,7 @@ async def on_message(message: Message):
             try:
                 await message.delete()
                 logging.info(
-                    "Delete if not dot %s: %r",
+                    "Delete User [%s]: %r",
                     message.author,
                     message.content,
                 )
@@ -153,4 +153,4 @@ async def delete_sent_message(channel: TextChannel ):
         deleted = await fetched_channel.purge(limit=50, check=lambda m: m.author == soulland_community.user)
         print(f"{soulland_community.user} Deleted {len(deleted)} messages")
             
-soulland_community.run(config.SOULLAND_COMMUNITY,log_handler=logging.NullHandler())
+# soulland_community.run(config.SOULLAND_COMMUNITY,log_handler=logging.NullHandler())
