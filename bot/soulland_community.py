@@ -70,9 +70,9 @@ async def on_ready():
             print(f"✅{soulland_community.user} Web store embed created successfully")
         else:
             print(f"❌{soulland_community.user} Web store channel is not a TextChannel")
+        update_server_status.start()
             
         print(f"✅{soulland_community.user} Bot is ready and SoulEmbed are sent successfully")
-
     except Exception as e:
         print(f"❌{soulland_community.user} Error during on_ready: {e}")
         await soulland_community.close()
