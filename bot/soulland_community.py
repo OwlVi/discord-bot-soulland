@@ -29,6 +29,7 @@ async def on_ready():
         # initialize channels and views
         
         invite_link_channel = soulland_community.get_channel(config.INVITE_LINK_CHANNEL_ID)
+
         if not invite_link_channel:
             print(f"❌{soulland_community.user} Channel not found")
             return
@@ -43,6 +44,7 @@ async def on_ready():
             print(f"❌{soulland_community.user} Invite channel is not a TextChannel")
 
         ipserver_channel = soulland_community.get_channel(config.IP_SERVER_CHANNEL_ID)
+
         if not ipserver_channel:
             print(f"❌{soulland_community.user} IP Server channel not found")
             return
@@ -56,6 +58,7 @@ async def on_ready():
             print(f"❌{soulland_community.user} IP Server channel is not a TextChannel")
             
         web_store_channel = soulland_community.get_channel(config.WEB_STORE_CHANNEL_ID)
+
         if not web_store_channel:
             print(f"❌{soulland_community.user} Web store channel not found")
             return
@@ -112,6 +115,7 @@ async def update_server_status():
         status_message = await status_channel.send(embed=embed)
 
 
+
 @soulland_community.event
 async def on_message(message: Message):
     """ดักจับทุกข้อความเพื่อควบคุมช่องที่กำหนด"""
@@ -122,12 +126,14 @@ async def on_message(message: Message):
 
     # ตรวจสอบว่าอยู่ในแชนแนลที่กำหนดหรือไม่
     if message.channel.id == config.DOT_CHANNEL_ID:
+
         # ยอมรับเฉพาะข้อความที่เป็นจุดเดียวเท่านั้น
         if message.content.strip() != ".":
             try:
                 await message.delete()
                 logging.info(
                     "Delete User [%s]: %r",
+
                     message.author,
                     message.content,
                 )
@@ -152,5 +158,4 @@ async def delete_sent_message(channel: TextChannel ):
     if isinstance(fetched_channel, TextChannel):
         deleted = await fetched_channel.purge(limit=50, check=lambda m: m.author == soulland_community.user)
         print(f"{soulland_community.user} Deleted {len(deleted)} messages")
-            
-# soulland_community.run(config.SOULLAND_COMMUNITY,log_handler=logging.NullHandler())
+          

@@ -2,8 +2,8 @@ import datetime as time
 from discord.embeds import Embed
 from discord.colour import Colour
 from mcstatus.responses import JavaStatusResponse
-
 import config
+
 
 class SoulEmbed:
     def give_role(self):

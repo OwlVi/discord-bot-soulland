@@ -87,5 +87,3 @@ async def delete_sent_message(channel: TextChannel ):
     if isinstance(fetched_channel, TextChannel):
         deleted = await fetched_channel.purge(limit=50, check=lambda m: m.author == tang_san.user)
         print(f"🧹 Deleted {len(deleted)} messages")
-        
-# tang_san.run(TANG_SAN)
