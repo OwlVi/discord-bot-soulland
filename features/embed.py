@@ -1,5 +1,9 @@
+import datetime as time
 from discord.embeds import Embed
 from discord.colour import Colour
+from mcstatus.responses import JavaStatusResponse
+import config
+
 
 class SoulEmbed:
     def give_role(self):
@@ -103,3 +107,38 @@ class SoulEmbed:
         self.set_footer(text="Soulland Realms | สนับสนุนเซิร์ฟเวอร์เพื่อสิทธิพิเศษต่าง ๆ")
         return self
     
+    def status_on(self,status:JavaStatusResponse):
+        self = Embed(
+            title="สถานะ : 🟢 เซิฟเวอร์ออนไลน์",
+            description=f"🌍 **Server IP:** `{config.SERVER_IP}`",
+            color=Colour.green(),
+            timestamp=time.datetime.now()
+        )
+        
+        player_list = "No players online."
+        if status.players.sample:
+            player_names = [player.name for player in status.players.sample]
+            player_list = ", ".join(player_names)
+            if len(player_list) > 1024:
+                player_list = player_list[:1020] + "..."
+
+        self.add_field(name="📝 Version", value="1.21.4", inline=True)
+        self.add_field(name="👥 Players", value=f"{status.players.online}/{status.players.max}", inline=True)
+        self.add_field(name="📊 Ping", value=f"{round(status.latency)}ms", inline=True)
+        self.add_field(name="🎮 Online Players", value=player_list, inline=False)
+        self.add_field(name="📢 MOTD", value=status.description.title(), inline=False)
+        self.set_thumbnail(url=f"https://api.mcsrvstat.us/icon/{config.SERVER_IP}")
+        self.set_image(url=f"https://mcapi.us/server/image?theme=dark&ip={config.SERVER_IP}")
+        self.set_footer(text="Last updated", icon_url="https://cdn-icons-png.flaticon.com/512/906/906361.png")
+
+        return self
+    
+    def status_off(self):
+        self = Embed(
+            title="สถานะ : 🔴 เซิฟเวอร์ออฟไลน์",
+            description=f"🚫 ขณะนี้เซิฟเวอร์ `{config.SERVER_IP}` ออฟไลน์อยู่",
+            color=Colour.red(),
+            timestamp=time.datetime.now()
+        )
+        self.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/1828/1828843.png")
+        return self

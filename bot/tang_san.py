@@ -3,11 +3,11 @@ from discord.interactions import Interaction
 from discord.channel import TextChannel
 from discord.flags import Intents
 from discord.ui import  View
-from button import SoulButton
 from config import TANG_SAN, VERIFY_CHANNEL_ID, GIVE_ROLE_CHANNEL_ID
+from features.button import SoulButton
 from features.embed import SoulEmbed
 from features.routing import ButtonType
-from modal import GiveRole, HandlerModal
+from features.modal import GiveRole, HandlerModal
 
 tang_san = Bot(command_prefix="!", intents=Intents().all())
 
@@ -87,5 +87,3 @@ async def delete_sent_message(channel: TextChannel ):
     if isinstance(fetched_channel, TextChannel):
         deleted = await fetched_channel.purge(limit=50, check=lambda m: m.author == tang_san.user)
         print(f"🧹 Deleted {len(deleted)} messages")
-        
-tang_san.run(TANG_SAN)
