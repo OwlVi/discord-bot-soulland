@@ -3,7 +3,6 @@ from discord.enums import ButtonStyle
 from features.routing import ButtonType
 
 class SoulButton():
-
     def button_give_role(self):
         self=Button(
             label="รับยศ MEMBER",
