@@ -1,23 +1,30 @@
 @echo off
+title 🔮 Bot Soulland - Console
 cd /d %~dp0
 
 echo ===============================
-echo install dependencies...
+echo Installing dependencies...
 echo ===============================
 python -m pip install --upgrade pip >nul 2>&1
 python -m pip install -r requirements.txt
 
 if errorlevel 1 (
-    echo ❌ error can't install packages!
+    echo ❌ Failed to install dependencies!
     pause
     exit /b
 )
 
-echo ===============================
-echo starting bot...
-echo ===============================
-python bot.py
+if not exist logs (
+    mkdir logs
+)
 
 echo ===============================
-echo bot stopped
+echo Starting Soulland bot...
+echo ===============================
+
+python main.py > logs\bot.log 2>&1
+
+echo ===============================
+echo Bot stopped - check logs\bot.log for more info
+echo ===============================
 pause
