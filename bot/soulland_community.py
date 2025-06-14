@@ -1,4 +1,5 @@
 import logging
+import traceback
 import discord
 import config
 from mcstatus import JavaServer
@@ -24,14 +25,14 @@ logging.basicConfig(level=logging.INFO)
 async def on_ready():
     try:
         await soulland_community.tree.sync()
-        print(f"✅ Logged in as {soulland_community.user}")
+        print(f" Logged in as {soulland_community.user}")
         
         # initialize channels and views
         
         invite_link_channel = soulland_community.get_channel(config.INVITE_LINK_CHANNEL_ID)
 
         if not invite_link_channel:
-            print(f"❌{soulland_community.user} Channel not found")
+            print(f"{soulland_community.user} Channel not found")
             return
 
         if isinstance(invite_link_channel, TextChannel):
@@ -39,43 +40,43 @@ async def on_ready():
             await invite_link_channel.send(
                 embed=SoulEmbed().invite_link()
                 )
-            print(f"✅{soulland_community.user} Invite embed created successfully")
+            print(f"{soulland_community.user} Invite embed created successfully")
         else:
-            print(f"❌{soulland_community.user} Invite channel is not a TextChannel")
+            print(f"{soulland_community.user} Invite channel is not a TextChannel")
 
         ipserver_channel = soulland_community.get_channel(config.IP_SERVER_CHANNEL_ID)
 
         if not ipserver_channel:
-            print(f"❌{soulland_community.user} IP Server channel not found")
+            print(f"{soulland_community.user} IP Server channel not found")
             return
         if isinstance(ipserver_channel, TextChannel):
             await delete_sent_message(ipserver_channel)
             await ipserver_channel.send(
                 embed=SoulEmbed().ipserver()
                 )
-            print(f"✅{soulland_community.user} IP Server embed created successfully")
+            print(f"{soulland_community.user} IP Server embed created successfully")
         else:
-            print(f"❌{soulland_community.user} IP Server channel is not a TextChannel")
+            print(f"{soulland_community.user} IP Server channel is not a TextChannel")
             
         web_store_channel = soulland_community.get_channel(config.WEB_STORE_CHANNEL_ID)
 
         if not web_store_channel:
-            print(f"❌{soulland_community.user} Web store channel not found")
+            print(f"{soulland_community.user} Web store channel not found")
             return
         if isinstance(web_store_channel, TextChannel):
             await delete_sent_message(web_store_channel)
             await web_store_channel.send(
                 embed=SoulEmbed().website()
                 )
-            print(f"✅{soulland_community.user} Web store embed created successfully")
+            print(f"{soulland_community.user} Web store embed created successfully")
         else:
-            print(f"❌{soulland_community.user} Web store channel is not a TextChannel")
+            print(f"{soulland_community.user} Web store channel is not a TextChannel")
+        update_server_status.start()
             
-        print(f"✅{soulland_community.user} Bot is ready and SoulEmbed are sent successfully")
-
+        print(f"{soulland_community.user} Bot is ready and SoulEmbed are sent successfully")
     except Exception as e:
-        print(f"❌{soulland_community.user} Error during on_ready: {e}")
-        await soulland_community.close()
+        print(f"{soulland_community.user} Error during on_ready: {e}")
+        traceback.print_exc()
 
 @tasks.loop(seconds=60)
 async def update_server_status():
@@ -85,15 +86,14 @@ async def update_server_status():
         server = JavaServer.lookup(f"{config.SERVER_IP}:{config.SERVER_PORT}")
         status = server.status()
         embed = SoulEmbed().status_on(status=status)
-        print(f"Minecraft server connecting")
     except Exception as e:
-        print(f"❌ Error fetching Minecraft server status: {e}")
+        print(f"{soulland_community.user} Error fetching Minecraft server status: {e}")
         embed = SoulEmbed().status_off()
 
     # ดึง channel และตรวจสอบข้อความเก่า
     status_channel = soulland_community.get_channel(config.STATUS_CHANNEL_ID)
     if not isinstance(status_channel, TextChannel):
-        print("❌ Status channel not found or invalid.")
+        print(f"{soulland_community.user} Status channel not found or invalid.")
         return
 
     # ค้นหาข้อความเดิม (ส่งโดยบอทตัวเอง)
@@ -105,14 +105,15 @@ async def update_server_status():
 
     # ถ้ายังไม่มีข้อความเลย ให้ส่งใหม่
     if not status_message:
-        status_message = await status_channel.send("🔄 Loading server status...")
+        status_message = await status_channel.send("Loading server status...")
 
     try:
         await status_message.edit(content=None, embed=embed)
-        print("✅ Server status updated")
+        print(f"{soulland_community.user} Server status updated")
     except Exception as edit_error:
-        print(f"⚠️ Failed to edit status message: {edit_error}")
+        print(f"{soulland_community.user} Failed to edit status message: {edit_error}")
         status_message = await status_channel.send(embed=embed)
+        traceback.print_exc()
 
 
 
@@ -147,7 +148,7 @@ async def on_message(message: Message):
         
 @soulland_community.event
 async def on_disconnect():
-    print("{soulland_community.user} Disconnected from Discord")
+    print(f"{soulland_community.user} Disconnected from Discord")
     for channel in channel_list:
         if isinstance(channel, TextChannel):
             await delete_sent_message(channel)
