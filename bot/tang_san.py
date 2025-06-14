@@ -19,13 +19,13 @@ channel_list = []  # เก็บช่องทางที่ส่งข้�
 async def on_ready():
     
         await tang_san.tree.sync()
-        print(f"✅{tang_san.user} Logged in as {tang_san.user}")
+        print(f"{tang_san.user} Logged in as {tang_san.user}")
         
         # initialize channels and views
         
         verify_channel = tang_san.get_channel(VERIFY_CHANNEL_ID)
         if not verify_channel:
-            print(f"❌{tang_san.user} Channel not found")
+            print(f"{tang_san.user} Channel not found")
             return
 
         if isinstance(verify_channel, TextChannel):
@@ -33,13 +33,13 @@ async def on_ready():
             await verify_channel.send(
                 embed=SoulEmbed().verify(), 
                 view=View(timeout=None).add_item(SoulButton().button_verify()))
-            print(f"✅{tang_san.user} Verify embed created successfully")
+            print(f"{tang_san.user} Verify embed created successfully")
         else:
-            print(f"❌{tang_san.user} Verify channel is not a TextChannel")
+            print(f"{tang_san.user} Verify channel is not a TextChannel")
 
         give_role_channel = tang_san.get_channel(GIVE_ROLE_CHANNEL_ID)
         if not give_role_channel:
-            print(f"❌{tang_san.user} Give role channel not found")
+            print(f"{tang_san.user} Give role channel not found")
             return
         if isinstance(give_role_channel, TextChannel):
             button = View(timeout=None)
@@ -49,11 +49,11 @@ async def on_ready():
             await give_role_channel.send(
                 embed=SoulEmbed().give_role(), 
                 view=button)
-            print(f"✅{tang_san.user} Give role embed created successfully")
+            print(f"{tang_san.user} Give role embed created successfully")
         else:
-            print(f"❌{tang_san.user} Give role channel is not a TextChannel")
+            print(f"{tang_san.user} Give role channel is not a TextChannel")
             
-        print(f"✅{tang_san.user} Bot is ready and SoulEmbed are sent successfully")
+        print(f"{tang_san.user} Bot is ready and SoulEmbed are sent successfully")
 
 
         traceback.print_exc()
@@ -77,10 +77,10 @@ async def on_disconnect():
     for channel in channel_list:
         if isinstance(channel, TextChannel):
             await delete_sent_message(channel)
-            print(f"🧹{tang_san.user} Deleted messages in {channel.name}")
+            print(f"{tang_san.user} Deleted messages in {channel.name}")
 
 async def delete_sent_message(channel: TextChannel ):
     fetched_channel = tang_san.get_channel(channel.id) if channel else None
     if isinstance(fetched_channel, TextChannel):
         deleted = await fetched_channel.purge(limit=50, check=lambda m: m.author == tang_san.user)
-        print(f"🧹{tang_san.user} Deleted {len(deleted)} messages")
+        print(f"{tang_san.user} Deleted {len(deleted)} messages")

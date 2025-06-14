@@ -10,14 +10,14 @@ logging.basicConfig(level=logging.INFO)
 async def run_bot(bot:Bot, token_name: str, token: str):
     while True:
         try:
-            logging.info(f"🚀 Starting bot: {token_name}")
+            logging.info(f"Starting bot: {token_name}")
             await bot.start(token)
         except Exception as e:
-            logging.exception(f"❌ Bot {token_name} crashed: {e}")
-            logging.info(f"🔁 Restarting {token_name} in 5 seconds...")
+            logging.exception(f"Bot {token_name} crashed: {e}")
+            logging.info(f"Restarting {token_name} in 5 seconds...")
             await asyncio.sleep(5)  # รอแล้วค่อย start ใหม่
         else:
-            logging.info(f"🛑 Bot {token_name} shut down normally.")
+            logging.info(f"Bot {token_name} shut down normally.")
             break
 
 async def main():

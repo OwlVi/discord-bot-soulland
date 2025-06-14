@@ -15,6 +15,7 @@ class Verify(Modal):
 
     async def on_submit(self, interaction: Interaction):
         code = self.code_input.value.strip()
+        
 
         if not code.isdigit() or len(code) != 4:
             await interaction.response.send_message(
