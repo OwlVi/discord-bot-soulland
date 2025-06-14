@@ -115,7 +115,9 @@ async def update_server_status(status_channel:TextChannel):
     # ค้นหาข้อความเดิม (ส่งโดยบอทตัวเอง)
     if not status_message:
         async for msg in status_channel.history(limit=10):
-            if msg.author == soulland_community.user:
+            if soulland_community.user is None:
+                return
+            if msg.author.id == soulland_community.user.id:
                 status_message = msg
                 break
 
