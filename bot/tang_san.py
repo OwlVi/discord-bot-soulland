@@ -19,7 +19,7 @@ channel_list = []  # เก็บช่องทางที่ส่งข้�
 async def on_ready():
     
         await tang_san.tree.sync()
-        print(f"{tang_san.user} Logged in as {tang_san.user}")
+        print(f"Logged in as {tang_san.user}")
         
         # initialize channels and views
         

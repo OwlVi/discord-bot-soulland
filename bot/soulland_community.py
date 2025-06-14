@@ -15,6 +15,8 @@ intents = Intents().all()
 intents.message_content = True
 sent_message = None
 status_message = None
+last_player = None
+last_img = None
 channel_list = []  
 
 soulland_community = Bot(command_prefix="!", intents=intents)
@@ -25,8 +27,8 @@ logging.basicConfig(level=logging.INFO)
 async def on_ready():
     try:
         await soulland_community.tree.sync()
-        print(f" Logged in as {soulland_community.user}")
-        
+        print(f"Logged in as {soulland_community.user}")
+
         # initialize channels and views
         
         invite_link_channel = soulland_community.get_channel(config.INVITE_LINK_CHANNEL_ID)
@@ -71,7 +73,17 @@ async def on_ready():
             print(f"{soulland_community.user} Web store embed created successfully")
         else:
             print(f"{soulland_community.user} Web store channel is not a TextChannel")
-        update_server_status.start()
+        
+        status_channel = soulland_community.get_channel(config.STATUS_CHANNEL_ID)
+        if not status_channel:
+            print(f"{soulland_community.user} Status channel not found")
+            return
+        if isinstance(status_channel, TextChannel):
+            await delete_sent_message(status_channel)
+            update_server_status.start(status_channel)
+            print(f"{soulland_community.user} Status embed created successfully")
+        else:
+            print(f"{soulland_community.user} Status channel is not a TextChannel")
             
         print(f"{soulland_community.user} Bot is ready and SoulEmbed are sent successfully")
     except Exception as e:
@@ -79,19 +91,23 @@ async def on_ready():
         traceback.print_exc()
 
 @tasks.loop(seconds=60)
-async def update_server_status():
+async def update_server_status(status_channel:TextChannel):
     global status_message
-
+    global last_player
+    global last_img
+    temp_embed = SoulEmbed()
     try:
         server = JavaServer.lookup(f"{config.SERVER_IP}:{config.SERVER_PORT}")
-        status = server.status()
-        embed = SoulEmbed().status_on(status=status)
+        temp_embed.last_player_count = last_player
+        temp_embed.last_image_url = last_img
+        embed = temp_embed.status_on(status=server.status())
+        last_player = temp_embed.last_player_count
+        last_img = temp_embed.last_image_url
     except Exception as e:
         print(f"{soulland_community.user} Error fetching Minecraft server status: {e}")
         embed = SoulEmbed().status_off()
+        return
 
-    # ดึง channel และตรวจสอบข้อความเก่า
-    status_channel = soulland_community.get_channel(config.STATUS_CHANNEL_ID)
     if not isinstance(status_channel, TextChannel):
         print(f"{soulland_community.user} Status channel not found or invalid.")
         return

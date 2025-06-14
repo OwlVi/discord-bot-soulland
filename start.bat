@@ -22,9 +22,9 @@ echo ===============================
 echo Starting Soulland bot...
 echo ===============================
 
-python main.py > logs\bot.log 2>&1
+start "Soulland Discord Bot" python main.py > logs\bot.log 2>&1
 
 echo ===============================
 echo Bot stopped - check logs\bot.log for more info
 echo ===============================
-pause
+close
