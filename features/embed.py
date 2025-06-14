@@ -7,6 +7,10 @@ import config
 
 
 class SoulEmbed:
+    def __init__(self):
+        self.last_player_count = None 
+        self.last_image_url = None
+        
     def give_role(self):
         embed = Embed(
             title=":wave: ยินดีต้อนรับสู่ Soulland Realms!",
@@ -139,8 +143,18 @@ class SoulEmbed:
         embed.set_thumbnail(url=f"https://api.mcstatus.io/v2/icon/{config.SERVER_IP}")
         
         # Image
-        embed.set_image(url=f"https://mcapi.us/server/image?theme=dark&ip={config.SERVER_IP}&cache_bust={randint(0,999999)}")
-
+        # เงื่อนไข: update รูปเฉพาะเมื่อจำนวนผู้เล่นเปลี่ยน
+        player_count = status.players.online
+        if self.last_player_count != player_count:
+            url = f"https://mcapi.us/server/image?theme=dark&ip={config.SERVER_IP}&cache_bust={randint(0, 999999)}"
+            print(f"Player count changed: {self.last_player_count} → {player_count}")
+            embed.set_image(url=url)
+            self.last_player_count = player_count
+            self.last_image_url = url
+        else:
+            embed.set_image(url=self.last_image_url)
+            print("Player count unchanged — image not updated")
+            
         # Footer
         embed.set_footer(text="Last updated", icon_url="https://cdn-icons-png.flaticon.com/512/906/906361.png")
 

@@ -15,6 +15,8 @@ intents = Intents().all()
 intents.message_content = True
 sent_message = None
 status_message = None
+last_player = None
+last_img = None
 channel_list = []  
 
 soulland_community = Bot(command_prefix="!", intents=intents)
@@ -92,10 +94,17 @@ async def on_ready():
 @tasks.loop(seconds=60)
 async def update_server_status(status_channel:TextChannel):
     global status_message
-
+    global last_player
+    global last_img
+    temp_embed = SoulEmbed()
     try:
         server = JavaServer.lookup(f"{config.SERVER_IP}:{config.SERVER_PORT}")
-        embed = SoulEmbed().status_on(status=server.status())
+        temp_embed.last_player_count = last_player
+        temp_embed.last_image_url = last_img
+        embed = temp_embed.status_on(status=server.status())
+        last_player = temp_embed.last_player_count
+        last_img = temp_embed.last_image_url
+        
     except Exception as e:
         print(f"{soulland_community.user} Error fetching Minecraft server status: {e}")
         embed = SoulEmbed().status_off()
