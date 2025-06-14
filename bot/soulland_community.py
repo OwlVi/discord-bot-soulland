@@ -28,7 +28,7 @@ async def on_ready():
     try:
         await soulland_community.tree.sync()
         print(f"Logged in as {soulland_community.user}")
-        
+
         # initialize channels and views
         
         invite_link_channel = soulland_community.get_channel(config.INVITE_LINK_CHANNEL_ID)
@@ -85,7 +85,6 @@ async def on_ready():
         else:
             print(f"{soulland_community.user} Status channel is not a TextChannel")
             
-            
         print(f"{soulland_community.user} Bot is ready and SoulEmbed are sent successfully")
     except Exception as e:
         print(f"{soulland_community.user} Error during on_ready: {e}")
@@ -104,7 +103,6 @@ async def update_server_status(status_channel:TextChannel):
         embed = temp_embed.status_on(status=server.status())
         last_player = temp_embed.last_player_count
         last_img = temp_embed.last_image_url
-        
     except Exception as e:
         print(f"{soulland_community.user} Error fetching Minecraft server status: {e}")
         embed = SoulEmbed().status_off()
