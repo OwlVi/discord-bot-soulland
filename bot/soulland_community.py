@@ -105,13 +105,13 @@ async def update_server_status():
 
     # ถ้ายังไม่มีข้อความเลย ให้ส่งใหม่
     if not status_message:
-        status_message = await status_channel.send("🔄 Loading server status...")
+        status_message = await status_channel.send("Loading server status...")
 
     try:
         await status_message.edit(content=None, embed=embed)
         print(f"{soulland_community.user} Server status updated")
     except Exception as edit_error:
-        print(f"⚠️{soulland_community.user} Failed to edit status message: {edit_error}")
+        print(f"{soulland_community.user} Failed to edit status message: {edit_error}")
         status_message = await status_channel.send(embed=embed)
         traceback.print_exc()
 
