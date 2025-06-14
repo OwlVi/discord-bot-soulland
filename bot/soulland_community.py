@@ -1,4 +1,5 @@
 import logging
+import traceback
 import discord
 import config
 from mcstatus import JavaServer
@@ -75,7 +76,7 @@ async def on_ready():
         print(f"✅{soulland_community.user} Bot is ready and SoulEmbed are sent successfully")
     except Exception as e:
         print(f"❌{soulland_community.user} Error during on_ready: {e}")
-        await soulland_community.close()
+        traceback.print_exc()
 
 @tasks.loop(seconds=60)
 async def update_server_status():
@@ -85,15 +86,15 @@ async def update_server_status():
         server = JavaServer.lookup(f"{config.SERVER_IP}:{config.SERVER_PORT}")
         status = server.status()
         embed = SoulEmbed().status_on(status=status)
-        print(f"Minecraft server connecting")
+        print(f"{soulland_community.user} Minecraft server connecting")
     except Exception as e:
-        print(f"❌ Error fetching Minecraft server status: {e}")
+        print(f"❌{soulland_community.user} Error fetching Minecraft server status: {e}")
         embed = SoulEmbed().status_off()
 
     # ดึง channel และตรวจสอบข้อความเก่า
     status_channel = soulland_community.get_channel(config.STATUS_CHANNEL_ID)
     if not isinstance(status_channel, TextChannel):
-        print("❌ Status channel not found or invalid.")
+        print(f"❌{soulland_community.user} Status channel not found or invalid.")
         return
 
     # ค้นหาข้อความเดิม (ส่งโดยบอทตัวเอง)
@@ -109,10 +110,11 @@ async def update_server_status():
 
     try:
         await status_message.edit(content=None, embed=embed)
-        print("✅ Server status updated")
+        print(f"✅{soulland_community.user} Server status updated")
     except Exception as edit_error:
-        print(f"⚠️ Failed to edit status message: {edit_error}")
+        print(f"⚠️{soulland_community.user} Failed to edit status message: {edit_error}")
         status_message = await status_channel.send(embed=embed)
+        traceback.print_exc()
 
 
 
@@ -147,7 +149,7 @@ async def on_message(message: Message):
         
 @soulland_community.event
 async def on_disconnect():
-    print("{soulland_community.user} Disconnected from Discord")
+    print(f"{soulland_community.user} Disconnected from Discord")
     for channel in channel_list:
         if isinstance(channel, TextChannel):
             await delete_sent_message(channel)
