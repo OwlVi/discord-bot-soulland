@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO)
 async def on_ready():
     try:
         await soulland_community.tree.sync()
-        print(f" Logged in as {soulland_community.user}")
+        print(f"Logged in as {soulland_community.user}")
         
         # initialize channels and views
         
@@ -71,7 +71,18 @@ async def on_ready():
             print(f"{soulland_community.user} Web store embed created successfully")
         else:
             print(f"{soulland_community.user} Web store channel is not a TextChannel")
-        update_server_status.start()
+        
+        status_channel = soulland_community.get_channel(config.STATUS_CHANNEL_ID)
+        if not status_channel:
+            print(f"{soulland_community.user} Status channel not found")
+            return
+        if isinstance(status_channel, TextChannel):
+            await delete_sent_message(status_channel)
+            update_server_status.start(status_channel)
+            print(f"{soulland_community.user} Status embed created successfully")
+        else:
+            print(f"{soulland_community.user} Status channel is not a TextChannel")
+            
             
         print(f"{soulland_community.user} Bot is ready and SoulEmbed are sent successfully")
     except Exception as e:
@@ -79,19 +90,17 @@ async def on_ready():
         traceback.print_exc()
 
 @tasks.loop(seconds=60)
-async def update_server_status():
+async def update_server_status(status_channel:TextChannel):
     global status_message
 
     try:
         server = JavaServer.lookup(f"{config.SERVER_IP}:{config.SERVER_PORT}")
-        status = server.status()
-        embed = SoulEmbed().status_on(status=status)
+        embed = SoulEmbed().status_on(status=server.status())
     except Exception as e:
         print(f"{soulland_community.user} Error fetching Minecraft server status: {e}")
         embed = SoulEmbed().status_off()
+        return
 
-    # ดึง channel และตรวจสอบข้อความเก่า
-    status_channel = soulland_community.get_channel(config.STATUS_CHANNEL_ID)
     if not isinstance(status_channel, TextChannel):
         print(f"{soulland_community.user} Status channel not found or invalid.")
         return

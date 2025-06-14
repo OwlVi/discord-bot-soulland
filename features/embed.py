@@ -1,4 +1,5 @@
 import datetime as time
+from random import randint
 from discord.embeds import Embed
 from discord.colour import Colour
 from mcstatus.responses import JavaStatusResponse
@@ -7,7 +8,7 @@ import config
 
 class SoulEmbed:
     def give_role(self):
-        self = Embed(
+        embed = Embed(
             title=":wave: ยินดีต้อนรับสู่ Soulland Realms!",
             description=(
                 "สวัสดีผู้เล่นใหม่! หากคุณเพิ่งเข้าร่วมดิสคอร์ดเซิร์ฟเวอร์ของเรา และยังไม่ได้รับยศ...\n\n"
@@ -18,12 +19,12 @@ class SoulEmbed:
             ),
             color=Colour.blurple()
         )
-        self.set_image(url="https://media.discordapp.net/attachments/938151480270127174/1382746650224885852/promote1.jpg?format=webp&width=1522&height=856")
-        self.set_footer(text="Soulland Realms | ระบบรับยศอัตโนมัติ")
-        return self
+        embed.set_image(url="https://media.discordapp.net/attachments/938151480270127174/1382746650224885852/promote1.jpg?format=webp&width=1522&height=856")
+        embed.set_footer(text="Soulland Realms | ระบบรับยศอัตโนมัติ")
+        return embed
     
     def verify(self):
-        self = Embed(
+        embed = Embed(
             title=":wave: ยินดีต้อนรับสู่ Soulland Realms!",
             description=(
                 "**ขั้นตอนการยืนยันตัวตน**\n\n"
@@ -36,20 +37,20 @@ class SoulEmbed:
             color=Colour.green()
         )
 
-        self.add_field(
+        embed.add_field(
             name="📺 วิธีการยืนยันตัวตน (คลิกดูวิดีโอ)",
             value="**[คลิกดูวิดีโอ YouTube](https://www.youtube.com/watch?v=IUl0jDDN6Ug&t=1s)**",
             inline=False
         )
 
-        self.set_image(
+        embed.set_image(
             url="https://media.discordapp.net/attachments/938151480270127174/1381839706651754517/aw_.png?format=webp&quality=lossless&width=1522&height=856"
         )
-        self.set_footer(text="Soulland Realms - ระบบยืนยันตัวตนอัตโนมัติ")
-        return self
+        embed.set_footer(text="Soulland Realms - ระบบยืนยันตัวตนอัตโนมัติ")
+        return embed
 
     def ipserver(self):
-        self = Embed(
+        embed = Embed(
             title="🎮 IP เซิร์ฟเวอร์ Minecraft: play.soullandrealms.com",
             description=(
             "🌟 **พร้อมผจญภัยแล้วหรือยัง?**\n"
@@ -61,16 +62,16 @@ class SoulEmbed:
             color=Colour.green()
         )
         
-        self.set_image(
+        embed.set_image(
             url="https://media.discordapp.net/attachments/938151480270127174/1382834134585446650/soulland.jpg?format=webp&width=1522&height=856"
         )
         
-        self.set_footer(text="Soulland Realms | IP สำหรับเข้าเล่นเซิร์ฟเวอร์ Minecraft")
+        embed.set_footer(text="Soulland Realms | IP สำหรับเข้าเล่นเซิร์ฟเวอร์ Minecraft")
         
-        return self
+        return embed
 
     def invite_link(self):
-        self = Embed(
+        embed = Embed(
             title="🔗 ลิงก์เชิญเพื่อน https://discord.gg/mcsoulland",
             description=(
                 "ร่วมผจญภัยไปกับโลกแฟนตาซีแห่ง **Soulland Realms** 🌍\n\n"
@@ -80,16 +81,16 @@ class SoulEmbed:
             color=Colour.blue()
         )
 
-        self.set_image(
+        embed.set_image(
             url="https://media.discordapp.net/attachments/938151480270127174/1382834134585446650/soulland.jpg?format=webp&width=1522&height=856"
         )
         
-        self.set_footer(text="Soulland Realms | Fantasy MMO Community")
+        embed.set_footer(text="Soulland Realms | Fantasy MMO Community")
         
-        return self
+        return embed
     
     def website(self):
-        self = Embed(
+        embed = Embed(
             title="🛒 ร้านค้าอย่างเป็นทางการ Soulland Realms",
             description=(
                 "🎁 **สนับสนุนเซิร์ฟเวอร์และรับของรางวัลพิเศษ!**\n\n"
@@ -100,21 +101,23 @@ class SoulEmbed:
             color=Colour.gold()
         )
 
-        self.set_thumbnail(
+        embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/938151480270127174/1382834134585446650/soulland.jpg?format=webp&width=300&height=170"
         )
 
-        self.set_footer(text="Soulland Realms | สนับสนุนเซิร์ฟเวอร์เพื่อสิทธิพิเศษต่าง ๆ")
-        return self
+        embed.set_footer(text="Soulland Realms | สนับสนุนเซิร์ฟเวอร์เพื่อสิทธิพิเศษต่าง ๆ")
+        return embed
     
-    def status_on(self,status:JavaStatusResponse):
-        self = Embed(
+
+    def status_on(self, status: JavaStatusResponse):
+        embed = Embed(
             title="สถานะ : 🟢 เซิฟเวอร์ออนไลน์",
             description=f"🌍 **Server IP:** `{config.SERVER_IP}`",
             color=Colour.green(),
             timestamp=time.datetime.now()
         )
         
+        # รายชื่อผู้เล่น
         player_list = "No players online."
         if status.players.sample:
             player_names = [player.name for player in status.players.sample]
@@ -122,24 +125,33 @@ class SoulEmbed:
             if len(player_list) > 1024:
                 player_list = player_list[:1020] + "..."
 
-        self.add_field(name="📝 Version", value="1.21.4", inline=True)
-        self.add_field(name="👥 Players", value=f"{status.players.online}/{status.players.max}", inline=True)
-        self.add_field(name="📊 Ping", value=f"{round(status.latency)}ms", inline=True)
-        self.add_field(name="🎮 Online Players", value=player_list, inline=False)
-        self.add_field(name="📢 MOTD", value=status.description.title(), inline=False)
-        self.set_thumbnail(url=f"https://api.mcstatus.io/v2/icon/{config.SERVER_IP}")
-        self.set_image(url=f"https://api.mcstatus.io/v2/widget/java/{config.SERVER_IP}")
-        print(f"https://mcapi.us/server/image?theme=dark&ip={config.SERVER_IP}")
-        self.set_footer(text="Last updated", icon_url="https://cdn-icons-png.flaticon.com/512/906/906361.png")
+        # ข้อมูลเวอร์ชัน + ping
+        embed.add_field(name="📝 Version", value=status.version.name, inline=True)
+        embed.add_field(name="👥 Players", value=f"{status.players.online}/{status.players.max}", inline=True)
+        embed.add_field(name="📊 Ping", value=f"{round(status.latency)}ms", inline=True)
+        embed.add_field(name="🎮 Online Players", value=player_list, inline=False)
 
-        return self
+        # MOTD
+        motd = status.description.get('clean', [''])[0] if isinstance(status.description, dict) else str(status.description)
+        embed.add_field(name="📢 MOTD", value=motd, inline=False)
+
+        # Thumbnail
+        embed.set_thumbnail(url=f"https://api.mcstatus.io/v2/icon/{config.SERVER_IP}")
+        
+        # Image
+        embed.set_image(url=f"https://mcapi.us/server/image?theme=dark&ip={config.SERVER_IP}&cache_bust={randint(0,999999)}")
+
+        # Footer
+        embed.set_footer(text="Last updated", icon_url="https://cdn-icons-png.flaticon.com/512/906/906361.png")
+
+        return embed
     
     def status_off(self):
-        self = Embed(
+        embed = Embed(
             title="สถานะ : 🔴 เซิฟเวอร์ออฟไลน์",
             description=f"🚫 ขณะนี้เซิฟเวอร์ `{config.SERVER_IP}` ออฟไลน์อยู่",
             color=Colour.red(),
             timestamp=time.datetime.now()
         )
-        self.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/1828/1828843.png")
-        return self
+        embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/1828/1828843.png")
+        return embed
