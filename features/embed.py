@@ -127,8 +127,9 @@ class SoulEmbed:
         self.add_field(name="📊 Ping", value=f"{round(status.latency)}ms", inline=True)
         self.add_field(name="🎮 Online Players", value=player_list, inline=False)
         self.add_field(name="📢 MOTD", value=status.description.title(), inline=False)
-        self.set_thumbnail(url=f"https://api.mcsrvstat.us/icon/{config.SERVER_IP}")
-        self.set_image(url=f"https://mcapi.us/server/image?theme=dark&ip={config.SERVER_IP}")
+        self.set_thumbnail(url=f"https://api.mcstatus.io/v2/icon/{config.SERVER_IP}")
+        self.set_image(url=f"https://api.mcstatus.io/v2/widget/java/{config.SERVER_IP}")
+        print(f"https://mcapi.us/server/image?theme=dark&ip={config.SERVER_IP}")
         self.set_footer(text="Last updated", icon_url="https://cdn-icons-png.flaticon.com/512/906/906361.png")
 
         return self
